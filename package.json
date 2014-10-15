@@ -1,0 +1,27 @@
+{ 
+	"name": "chat",
+	"version": "0.0.1",
+	"private": "true",
+	"description": "my first socket.io app",
+	"dependencies": { 
+		"socket.io": "^1.1.0",
+		"express": "^4.9.5"
+		} 
+}
+
+/* original script from my simple chat server
+package.json file, which is slightly different, but 
+I'm not exactly sure why. Keeping it on hand in case
+I get any errors on socket.io being "undefined." 
+
+{
+  "name": "socket-chat-example",
+  "version": "0.0.1",
+  "description": "my first socket.io app",
+  "dependencies": {
+    "express": "^4.9.5",
+    "socket.io": "^1.1.0"
+  }
+
+}
+*/
