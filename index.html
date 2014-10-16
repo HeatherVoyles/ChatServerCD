@@ -5,50 +5,118 @@
 		#chat {
 			height:500px;
 		}
-		/* in this case we are merely defining the height for the div, so that we can see it on on the page and work with it.But, typically, we would add and link our css file here */ 
+		/*we need to hide the contentWrap so that users can't submit messages until they've submitted a nickname. */
+		#contenteWrap{ 
+			display: none;
+		}	
+		#chatWrap{ 
+			float: left;
+			border: 1px #000 solid; 
+		}
+		/* in this case we are merely defining the height for the chat div and border for the chatWrap, so that we can see it on on the page and work with it. But, typically, we would add and link our css file here */ 
 	</style>
 </head>
 
-
 <body>
-	<div id="chat"></div> <!--create a chat div for where you want the actual chat messages to go -->
-	<form id="send-message"> <!--create a form where users can submit their messages -->
-		<input size="35" id="message"></input> <!--create an input for your form so that it functions -->
-		<input type="submit"></input> <!--create a button so that the form can be submitted on an action -->
-	</form>
+
+
+	<!--where users enter their name -->
+	<div id="nickWrap">
+		<p>Enter a username:</p>
+		<!--create error message if their nickname is a duplicate with others-->
+		<p id="nickError"></p>
+		<form id="setNick">
+			<input size="35" id="nickname"></input>
+			<input type="submit"></input>
+		</form>
+	</div>
+
+	<div id="contentWrap">
+		<div id="chatWrap">
+			<!--where the chat messages go-->
+			<div id="chat"></div>
+			<form id="send-message"> <!--create a form where users can submit their messages -->
+				<input size="35" id="message"></input> <!--create an input for your form so that it functions -->
+				<input type="submit"></input> <!--create a button so that the form can be submitted on an action -->
+			</form>
+		</div>
+		<div id="users"></div>
+	</div>
 
 	<!--pull in the javascript files/-->
-
-	<script src="http://code.jquery.com/jquery-latest.min.js"> /* jquery makes everything easier;  	  url for latest version of jquery and need to include the socket file that socket generates when you use it; automatically on the local host */
-
 	<script src="/socket.io/socket.io.js"> /*I should be able to see all the autopopulated stuff on localhost3000/socket.io/socket.io.js, but I cannot. It reads: {"code":0,"message":"Transport unknown"}; moving to the next step to see if the javascript moves things along. */ </script>
+
+	<script src="http://code.jquery.com/jquery-1.11.1.js"> /* jquery makes everything easier;  	  url for latest version of jquery and need to include the socket file that socket generates when you use it; automatically on the local host */</script>
+
+	
 
 <!--Add jQuery, so that clients can send messages
 (L1) Typical jQuery starting point; this function runs when all of the elements of the page have loaded
 (L2) first we need to set up socket function,
 (L3) then we want to ensure that messages submitted thru the chat form make it to the server -->
 		<script>
-		jQuery(function ($) { 
-			var socket = io.connect();
+		jQuery(function($){ 
+			var socket = io();
+			var $nickForm = $('#nickError');
+			var $nickError = $('#nickname');
+			var $nickBox = $('#nickname');
+			var $users = $('#nickname');
 			var $messageForm = $('#send-message'); 
-			var $messageBox = ('#message');
+			var $messageBox = $('#message');
 			var $chat = $('#chat'); 
 
-			$messageForm.submit(function(e) {
-					e.preventDefault(); 
-					socket.emit('send message', $messageBox.val()); 
-						$messageBox.val(''); 
-					});	 
+			$nickForm.submit(function(e){ 
+				e.preventDefault(); 
+				socket.emit('new user', $nickBox.val(), function(data){
+					if(data){
+						$('#nickWrap').hide(); 
+						$('#contentWrap').show(); 
+					} else{
+						$nickError.html ('That username is taken. Try again.');
+					}
+
+				/* we want to get rid of the value and the nickname box once it's submitted, so it needs to be cleared. */
+				}); 
+				$nickBox.val('');
+			});
+
+
+			/*I do not understand this snippet - lines 84-92
+
+			socket.on('usernames', function(data){ 
+				/*var html = ''; 
+				for(i=0; i < data.length; i++) { 
+					html += data[i] + '<br/>'
+				}
+			/*	$users.html(html); */
+			socket.on('usernames', function(data){ 
+				console.log(data); 
+				$('#nickname').html(data);
+				$users.html(html);
+			});
+
+			$messageForm.submit(function(e){
+				e.preventDefault();
+				socket.emit('send message', $messageBox.val());
+				$messageBox.val('');
+			});
+
+			/*Brian added this content to make the messages appear. They were sending to server but not pushing to the chat div intially, but this code isn't in the tutorial*/
+
+			socket.on('new message', function(data){ 
+				console.log(data);
+				$('#chat').html(data);
+
+			});
 
 				 /* bind the eventhandler to the message form so that every time the message form is submitted the message is sent to the server. And, then prevent the default behavior of the event from refreshing the page every time there's a submit, then send the event to the server, then clear the message box' value by passing an empty string. */	
-		}); 
+			}); 
 
 		/* Now we want to ensure that the messages are set up to be received on the client side. */
 
-			socket.on('new message', function(data) { 
+			/*socket.on('new message', function(data) { 
 				$chat.append(data + "<br/>"); /* Not sure about the "<br/>") code or what it means */
-			});
-		});
+
 	</script>
 </body>
 </html>
