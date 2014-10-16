@@ -1,5 +1,6 @@
-/* Server Set Up: */
 
+
+/* Server Set Up: */
 var express = require('express'), /* Set up the server. Require our express module */
 	app = express(), /* to get functionality, we need to use variable and express function */
 	server = require('http').createServer(app), /* before, you could use "express.create server" to 
@@ -15,16 +16,18 @@ server.listen(3000, function(){
 	console.log('listening on *:3000');
 });
 
-	/*create socket functionality by creating variable 
-	io and socketio requirement and then make it listen (that's why we needed an http server object), add 
-	parameter of "listen" and pass to server and then tell it what port to listen to.
+/*create socket functionality by creating variable 
+io and socketio requirement and then make it listen (that's why we needed an http server object), add 
+parameter of "listen" and pass to server and then tell it what port to listen to.
 
 Route Set Up:
 /* Now that the server is set up, we need to set up the route. Right now, we can't access any pages; Express 
 makes routing a little easier */
-app.get('/', function(req, res){ /* root directory is the first parameter - what the client is trying to 
+app.get('/', function(req, res){ 
+
+/* root directory is the first parameter - what the client is trying to 
 access and then set functions for http request and response as parameters */
-	res.sendFile(__dirname + '/index.html'); /*we want the client to get the index.html file to get when 
+	res.sendfile(__dirname + '/index.html'); /*we want the client to get the index.html file to get when 
 	we go to localhost:3000 */
 });
 
@@ -43,14 +46,25 @@ io.sockets.on('connection', function(socket){
 			callback(true);
 			socket.nickname = data; 
 			nicknames.push(socket.nickname); 
-			io.sockets.emit('usernames', nicknames);
+			updateNicknames(); 
 		}
 	});
 
+	function updateNicknames(){ 
+		io.sockets.emit('usernames', nicknames); 
+	}
+
 	socket.on('send message', function(data){ 
-		console.log(data);
+		console.log(data); /*this second line of script was provided by 
+		Brian once I completed the alternate tutorial.*/
 		io.sockets.emit('new message', data); 
 		}); 
+
+	socket.on('disconnect', function(data){ 
+		if(!socket.nickname) return; 
+		nicknames.splice(nicknames.indexOf(socket.nickname), 1); 
+		updateNicknames(); 	
+	}); 
 }); 
 		/* we want the messages to go out to everyone, so we add 
 		sockets emit and pass the data collected from the function. 
@@ -64,11 +78,10 @@ io.sockets.on('connection', function(socket){
 		Remember "parameter = instruction and 
 		"function" = behaviour 
 
-		Comments removed from package.json file for quick reference:
-		/* original script from my simple chat server
-package.json file, which is slightly different, but 
-I'm not exactly sure why. Keeping it on hand in case
-I get any errors on socket.io being "undefined." 
+		The script below was removed from package.json on my original
+		simple chat server, but I kept for comparison value 
+		and quick reference. It is slightly different, but 
+		I'm not exactly sure why. 
 
 {
   "name": "socket-chat-example",
