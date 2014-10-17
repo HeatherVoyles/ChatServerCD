@@ -8,9 +8,9 @@ var express = require('express'), /* Set up the server. Require our express modu
 	bundles everything together for express; but, for socket io, we do need an http object. So, we can have 
 	create server and pass the app variable */
 	io = require('socket.io').listen(server),
+	nicknames = [];
 	/*Since we want to display a list of user names to the client, we need to keep 
 	track of them. An array will do this.*/ 
-	nicknames = [];
 
 server.listen(3000, function(){
 	console.log('listening on *:3000');
@@ -39,32 +39,33 @@ o receive on the server side.
 This section I don't fully understand as it relates to the nicknames */
 
 io.sockets.on('connection', function(socket){ 
-	socket.on('new user', function(data, callback){ 
+	socket.on('new user', function(data, callback){
 		if (nicknames.indexOf(data) != -1){
 			callback(false);
 		} else{
 			callback(true);
 			socket.nickname = data; 
-			nicknames.push(socket.nickname); 
-			updateNicknames(); 
+			nicknames.push(socket.nickname);
+			io.sockets.emit('usernames', nicknames);
 		}
-	});
+	});		
+			/*updateNicknames(); */
+	
+	
 
 	function updateNicknames(){ 
 		io.sockets.emit('usernames', nicknames); 
 	}
 
 	socket.on('send message', function(data){ 
-		console.log(data); /*this second line of script was provided by 
-		Brian once I completed the alternate tutorial.*/
 		io.sockets.emit('new message', data); 
-		}); 
+	}); 
+});
 
-	socket.on('disconnect', function(data){ 
+	/*socket.on('disconnect', function(data){ 
 		if(!socket.nickname) return; 
 		nicknames.splice(nicknames.indexOf(socket.nickname), 1); 
-		updateNicknames(); 	
-	}); 
+		updateNicknames();	
 }); 
 		/* we want the messages to go out to everyone, so we add 
 		sockets emit and pass the data collected from the function. 

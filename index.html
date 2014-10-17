@@ -34,10 +34,10 @@
 	<div id="contentWrap">
 			<!--where the chat messages go-->
 			<div id="chatWrap">
-			<div id="chat"></div>
-			<form id="send-message"> <!--create a form where users can submit their messages -->
-				<input size="35" id="message"></input> <!--create an input for your form so that it functions -->
-				<input type="submit"></input> <!--create a button so that the form can be submitted on an action -->
+				<div id="chat"></div>
+				<form id="send-message"> <!--create a form where users can submit their messages -->
+					<input size="35" id="message"></input> <!--create an input for your form so that it functions -->
+					<input type="submit"></input> <!--create a button so that the form can be submitted on an action -->
 			</form>
 		</div>
 		<div id="users"></div>
@@ -60,7 +60,6 @@
 			var $nickForm = $('#setNick');
 			var $nickError = $('#nickError');
 			var $nickBox = $('#nickname');
-			var $users = $('#users');
 			var $messageForm = $('#send-message'); 
 			var $messageBox = $('#message');
 			var $chat = $('#chat'); 
@@ -78,21 +77,18 @@
 				$nickBox.val('');
 			});
 
-				socket.on('usernames', function(data){ 
-					var html = ''; 
-					for(i=0; i < data.length; i++ { 
-						html += data[i] + '<br/>'
-					}
-
-					$users.html(html); 
-				})
-
-			/*I do not understand this snippet - lines 92-98; The second line is code that Brian suggested we add that's not in the tutorial.*/
-
-			socket.on('usernames', function(data){ 
+			socket.on('usernames', function(data){
+				var html = '';
+				for(i=0; i < data.length; i ++){
+					html += data[i] + '<br/>'
+				}
+				$users.html(html);
+			});
+		
+		socket.on('usernames', function(data){ 
 				console.log(data); 
 				$('#nickname').html(data);
-			});
+			});  
 
 			$messageForm.submit(function(e){
 				e.preventDefault();
@@ -100,7 +96,6 @@
 				$messageBox.val('');
 			}); 
 
-		
 			socket.on('new message', function(data){ 
 				$chat.append(data + "<br/>");
 			});
