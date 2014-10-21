@@ -60,6 +60,7 @@
 			var $nickForm = $('#setNick');
 			var $nickError = $('#nickError');
 			var $nickBox = $('#nickname');
+			var $users = $('#users');
 			var $messageForm = $('#send-message'); 
 			var $messageBox = $('#message');
 			var $chat = $('#chat'); 
@@ -97,11 +98,10 @@
 			}); 
 
 			socket.on('new message', function(data){ 
-				$chat.append(data + "<br/>");
+				$chat.append('<b>' + data.nick + ': </b>' + data.msg + "<br/>");
 			});
-
-				 /* bind the eventhandler to the message form so that every time the message form is submitted the message is sent to the server. And, then prevent the default behavior of the event from refreshing the page every time there's a submit, then send the event to the server, then clear the message box' value by passing an empty string. */	
 		}); 
+				 /* bind the eventhandler to the message form so that every time the message form is submitted the message is sent to the server. And, then prevent the default behavior of the event from refreshing the page every time there's a submit, then send the event to the server, then clear the message box' value by passing an empty string. */	
 
 	</script>
 </body>
