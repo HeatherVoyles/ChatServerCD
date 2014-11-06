@@ -8,13 +8,26 @@ var express = require('express'), /* Set up the server. Require our express modu
 	bundles everything together for express; but, for socket io, we do need an http object. So, we can have 
 	create server and pass the app variable */
 	io = require('socket.io').listen(server),
-	users = {};
+	users = {},
+	redis = require('redis'),
+	client = redis.createClient()
 	/*Since we want to display a list of user names to the client, we need to keep 
 	track of them. An array will do this.*/ 
 
 server.listen(3000, function(){
 	console.log('listening on *:3000');
 });
+
+//Redis integration script - connecting to Redis, it checks to see if it's on, if it doesn't connect, it sends the error message to the console. //
+
+client.on("error", function(err){ 
+	console.log("Error" + err);
+});
+
+client.set("app name", "simple chat", redis.print); 
+// checking to make sure Redis is doing what we're asking by way of setting & getting//
+	
+//End Redis script//
 
 /*create socket functionality by creating variable 
 io and socketio requirement and then make it listen (that's why we needed an http server object), add 
@@ -39,6 +52,19 @@ o receive on the server side.
 This section I don't fully understand as it relates to the nicknames */
 
 io.sockets.on('connection', function(socket){ 
+
+//Redis integration - getting the app name//
+	client.get('app name', function(err, reply){
+		console.log('app name is', reply); 
+	});
+
+	client.hgetall('history', function(err, replies) {
+		socket.emit('history', replies);
+	}); //when connected Redis gets history and sends it to individual user just connected//
+
+//End Redis//
+
+	console.log('a user connected');
 	socket.on('new user', function(data, callback){
 		if (data in users){
 			callback(false);
@@ -55,6 +81,7 @@ io.sockets.on('connection', function(socket){
 		io.sockets.emit('usernames', Object.keys(users)); 
 	}
 
+//socket on = chat message function - msg being sent to users via public or private functions)//
 	socket.on('send message', function(data, callback){ 
 		var msg = data.trim(); 
 		if(msg.substr(0,3) === '/w '){
@@ -74,8 +101,19 @@ io.sockets.on('connection', function(socket){
 			} 
 		} else{
 			io.sockets.emit('new message', {msg: msg, nick: socket.nickname}); 
+
+//Redis
+
+			client.incr('msg_id', function(err, msg_id) {
+				console.log('msg_id', msg_id);
+				client.hset('history', msg_id, msg); 
+			});
+//Redis
+
+
 		}  
 	}); 
+
 
 	socket.on('disconnect', function(data){
 		if(!socket.nickname) return;
@@ -83,6 +121,8 @@ io.sockets.on('connection', function(socket){
 		updateNicknames();
 	});
 });
+
+
 
 	/*socket.on('disconnect', function(data){ 
 		if(!socket.nickname) return; 

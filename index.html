@@ -114,7 +114,21 @@
 			socket.on('whisper', function(data){
 				$chat.append('<span class="whisper"><b>' + data.nick + ': </b>' + data.msg + "</span><br/>");
 			});	
+//REDIS//
+
+			socket.on('history', function(replies){
+			    for (var i in replies) {
+			      var msg = replies[i];
+			      $('#chat').append($('<span class="msg">').text(msg));
+			    };
+			  });
+//REDIS//
+
+
 		}); 
+
+
+
 				 /* bind the eventhandler to the message form so that every time the message form is submitted the message is sent to the server. And, then prevent the default behavior of the event from refreshing the page every time there's a submit, then send the event to the server, then clear the message box' value by passing an empty string. */	
 
 	</script>
