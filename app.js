@@ -107,12 +107,8 @@ io.sockets.on('connection', function(socket){
 				console.log('msg_id', msg_id);
 				client.hset('history', msg_id, msg); 
 			});
-//Redis
-
-
 		}  
 	}); 
-
 
 	socket.on('disconnect', function(data){
 		if(!socket.nickname) return;
@@ -122,8 +118,10 @@ io.sockets.on('connection', function(socket){
 });
 
 
+	/* Remember "parameter = instruction and 
+		"function" = behaviour 
 
-	/*socket.on('disconnect', function(data){ 
+	socket.on('disconnect', function(data){ 
 		if(!socket.nickname) return; 
 		nicknames.splice(nicknames.indexOf(socket.nickname), 1); 
 		updateNicknames();	
@@ -137,25 +135,10 @@ io.sockets.on('connection', function(socket){
 		to everyone but the sender 
 		socket.broadcast.emit ('new message', data); 
 
-		Remember "parameter = instruction and 
-		"function" = behaviour 
+	
 
-		The script below was removed from package.json on my original
-		simple chat server, but I kept for comparison value 
-		and quick reference. It is slightly different, but 
-		I'm not exactly sure why. 
+	
 
-{
-  "name": "socket-chat-example",
-  "version": "0.0.1",
-  "description": "my first socket.io app",
-  "dependencies": {
-    "express": "^4.9.5",
-    "socket.io": "^1.1.0"
-  }
-
-}
-*/
 
 
 
