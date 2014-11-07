@@ -1,48 +1,47 @@
 
 
 /* Server Set Up: */
-var express = require('express'), /* Set up the server. Require our express module */
-	app = express(), /* to get functionality, we need to use variable and express function */
-	server = require('http').createServer(app), /* before, you could use "express.create server" to 
+/* Set up the server. Require our express module */
+var express = require('express'), 
+/* to get functionality, we need to use variable and express function */
+	app = express(), 
+	/* before, you could use "express.create server" to 
 	create an http server; now it isn't automatically created, so the app variable 
 	bundles everything together for express; but, for socket io, we do need an http object. So, we can have 
 	create server and pass the app variable */
+	server = require('http').createServer(app), 
 	io = require('socket.io').listen(server),
 	users = {},
 	redis = require('redis'),
 	client = redis.createClient()
-	/*Since we want to display a list of user names to the client, we need to keep 
-	track of them. An array will do this.*/ 
 
+/*Since we want to display a list of user names to the client, we need to keep 
+track of them. An array will do this.*/ 
+
+ /* Listen to port */
 server.listen(3000, function(){
-	console.log('listening on *:3000');
 });
 
-//Redis integration script - connecting to Redis, it checks to see if it's on, if it doesn't connect, it sends the error message to the console. //
+//REDIS integration script - connecting to Redis, it checks to see if it's on, if it doesn't connect, it sends the error message to the console.//
 
 client.on("error", function(err){ 
 	console.log("Error" + err);
 });
 
-client.set("app name", "simple chat", redis.print); 
 // checking to make sure Redis is doing what we're asking by way of setting & getting//
-	
-//End Redis script//
+client.set("app name", "simple chat", redis.print); 	
 
 /*create socket functionality by creating variable 
 io and socketio requirement and then make it listen (that's why we needed an http server object), add 
-parameter of "listen" and pass to server and then tell it what port to listen to.
+parameter of "listen" and pass to server and then tell it what port to listen to.*/
 
-Route Set Up:
-/* Now that the server is set up, we need to set up the route. Right now, we can't access any pages; Express 
-makes routing a little easier */
+/* looks for request and response from the html (added _dirname because of multiple users) */
 app.get('/', function(req, res){ 
-
-/* root directory is the first parameter - what the client is trying to 
-access and then set functions for http request and response as parameters */
-	res.sendfile(__dirname + '/index.html'); /*we want the client to get the index.html file to get when 
-	we go to localhost:3000 */
+	res.sendfile(__dirname + '/index.html'); 	
 });
+
+/* looks for the style sheet */
+app.use("/style.css", express.static(__dirname + '/style.css'));
 
 /* Now we have to receive the event on the server 
 side. This code turns "on" a connection event; look at the name of the socket.emit 
