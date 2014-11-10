@@ -2,13 +2,10 @@
 
 /* Server Set Up: */
 /* Set up the server. Require our express module */
-var express = require('express'), 
 /* to get functionality, we need to use variable and express function */
+
+var express = require('express'), 
 	app = express(), 
-	/* before, you could use "express.create server" to 
-	create an http server; now it isn't automatically created, so the app variable 
-	bundles everything together for express; but, for socket io, we do need an http object. So, we can have 
-	create server and pass the app variable */
 	server = require('http').createServer(app), 
 	io = require('socket.io').listen(server),
 	users = {},
@@ -18,11 +15,11 @@ var express = require('express'),
 /*Since we want to display a list of user names to the client, we need to keep 
 track of them. An array will do this.*/ 
 
- /* Listen to port */
+/* Listen to port */
 server.listen(3000, function(){
 });
 
-//REDIS integration script - connecting to Redis, it checks to see if it's on, if it doesn't connect, it sends the error message to the console.//
+//REDIS integration script - connecting to Redis, checks to see if it's on, if it doesn't connect, it sends the error message to the console.//
 
 client.on("error", function(err){ 
 	console.log("Error" + err);
@@ -40,15 +37,11 @@ app.get('/', function(req, res){
 	res.sendfile(__dirname + '/index.html'); 	
 });
 
-/* looks for the style sheet */
+/*Looks for the style sheet */
 app.use("/style.css", express.static(__dirname + '/style.css'));
 
 /* Now we have to receive the event on the server 
-side. This code turns "on" a connection event; look at the name of the socket.emit 
-event on the index.html file and use the same name 
-o receive on the server side. 
-
-This section I don't fully understand as it relates to the nicknames */
+side. This code turns "on" a connection event.*/ 
 
 io.sockets.on('connection', function(socket){ 
 
@@ -59,7 +52,7 @@ io.sockets.on('connection', function(socket){
 
 	client.hgetall('history', function(err, replies) {
 		socket.emit('history', replies);
-	}); //when connected Redis gets history and sends it to individual user just connected//
+	}); //when connected, Redis gets history and sends it to individual user just connected//
 
 //End Redis//
 
@@ -101,7 +94,7 @@ io.sockets.on('connection', function(socket){
 		} else{
 			io.sockets.emit('new message', {msg: msg, nick: socket.nickname}); 
 
-//Redis
+//REDIS
 
 			client.incr('msg_id', function(err, msg_id) {
 				console.log('msg_id', msg_id);
@@ -118,8 +111,7 @@ io.sockets.on('connection', function(socket){
 });
 
 
-	/* Remember "parameter = instruction and 
-		"function" = behaviour 
+	/* 
 
 	socket.on('disconnect', function(data){ 
 		if(!socket.nickname) return; 

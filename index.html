@@ -8,7 +8,7 @@
 <!-- This is the title -->
 	<title>Hypertasker Chat w/ Socketio, Node, Redis</title>
 	
-	<!--NEED TO MOVE THIS TO STYLE.CSS FILE BUT IT KEEPS BREAING, SO GIT HUB IT FIRST.-->
+	<!--NEED TO MOVE THIS TO STYLE.CSS FILE BUT IT KEEPS BREAKING, SO GIT HUB IT FIRST.-->
 	</head>
 
 	<style>
@@ -16,7 +16,7 @@
 		body {
 			font-family: 'Abel', sans-serif;
 			font-size: 10pt; 
-	}
+		}
 
 		#chat {
 			color: black;
@@ -215,50 +215,48 @@
 	
 	</style>
 
-
-
 <!-- Body of the Chat -->
 <!--Where users enter their name. 
-Create error message if their nickname is a duplicate with others-->	
+Created an error message if user enters a nickname that is a duplicate with others-->	
 
 <body>
  <!-- This is the hidden registration box -->
 	<div id="nickWrap" div class="talkbubble">
 		<p>HOWDY. HANDSHAKES. HIGH-FIVES. <font color="#FF4719">| Enter Name to Join</p>
-		<p id="nickError">
-		</p>
+		<p id="nickError"></p>
 		<form id="setNick">
-
 			<input type="text" class="topcoat-text-input--large" value="" placeholder="text" size="55" id="nickname"/>
-
 			<button type="submit" class="topcoat-button--large--quiet"></button>
-
 		</form>
 	</div>
 
 <!--This is the chat content-->
 	<div id="contentWrap">   
 <!--This is the color bar across the top holding the titles-->
-			<div class="header">
-				<span class="title-right">Users Online</span>
-					<span class="title">HYPERTASKER CHAT 
-			</span>
-
+		<div class="header">
+			<span class="title-right">Users Online</span>
+			<span class="title">HYPERTASKER CHAT</span>
+		</div>	
+<!--Is this an extra div closing tag?-->
+	</div>		
  <!-- This is the white message box where the chat text appears -->
-		</div>
-			<div id="chatWrap">
-				<div id="chat"></div>
-				<!--create a form where users can submit their messages -->
-				<form id="send-message"> 		
-				 <!--create an input for form so that it functions -->
-					<input type="text" class="topcoat-text-input--large" value="" placeholder="text" size="55" id="message"/>
-					<button type="submit" class="topcoat-button--large--quiet"></button>
-			</form>
-		</div>
- <!-- This is the div where the user names appear on the right side of the chatwrap-->
-		<div id="users"></div>
 	</div>
- <!-- This is the script calling for socket.io and JQuery library -->
+	<div id="chatWrap">
+		<div id="chat">
+		</div>
+			<!--create a form where users can submit their messages -->
+			<form id="send-message"> 		
+				 <!--create an input for form so that it functions -->
+				<input type="text" class="topcoat-text-input--large" value="" placeholder="text" size="55" id="message"/>
+				<button type="submit" class="topcoat-button--large--quiet"></button>
+			</form>
+	</div>
+<!-- This is the div where the user names appear on the right side of the chatwrap-->
+	<div id="users">
+	</div>
+<!--Is this an extra div closing tag?-->
+	</div>
+<!-- This is the script calling for socket.io and JQuery library -->
 	<script src="/socket.io/socket.io.js"> </script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 
@@ -266,7 +264,7 @@ Create error message if their nickname is a duplicate with others-->
 (L1) Typical jQuery starting point; this function runs when all of the elements of the page have loaded
 (L2) first we need to set up socket function,
 (L3) then we want to ensure that messages submitted thru the chat form make it to the server-->
-		<script>
+	<script>
 		jQuery(function($){ 
 			var socket = io.connect();
 			var $nickForm = $('#setNick');
@@ -300,7 +298,7 @@ Create error message if their nickname is a duplicate with others-->
 				$users.html(html);
 			});
 		
-		socket.on('usernames', function(data){ 
+			socket.on('usernames', function(data){ 
 				console.log(data); 
 				$('#nickname').html(data);
 			});  
@@ -317,7 +315,7 @@ Create error message if their nickname is a duplicate with others-->
 				$messageBox.val('');
 			}); 
 
-//This clears chat message so new message can be entered upon enter or click of Send button//
+//This function clears chat message so new message can be entered upon enter or click of Send button//
 
 				 /* bind the eventhandler to the message form so that every time the message form is submitted the message is sent to the server. And, then prevent the default behavior of the event from refreshing the page every time there's a submit, then send the event to the server, then clear the message box' value by passing an empty string. */	
 
